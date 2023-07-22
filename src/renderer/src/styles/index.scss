@@ -1,0 +1,130 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  overflow: hidden;
+  background-color: $bgColor-2;
+  // font-size: 1920px;
+}
+
+body {
+  height: 100vh;
+}
+
+.wh100 {
+  width: 100%;
+  height: 100%;
+}
+
+button.buttons {
+  @include ButtonStyle;
+  cursor: pointer;
+  &:hover {
+    opacity: 0.8;
+  }
+  &:active {
+    opacity: 1;
+  }
+}
+
+/* input格式美化 */
+input {
+  outline-style: none;
+  border: 1px solid #ccc;
+  border-radius: rem(3px);
+  padding: rem(6px);
+  width: rem(400px);
+  height: rem(40px);
+  font-size: FS(28);
+}
+input:focus {
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+input:-internal-autofill-selected,
+.ant-input.ant-input-lg.ant-input-status-success {
+  background: white !important;
+}
+
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 rem(1000px) white inset !important;
+}
+
+.form-item {
+  display: flex;
+  label {
+    width: rem(100px);
+    height: rem(52px);
+    line-height: rem(52px);
+    padding: rem(12px);
+    display: block;
+    text-align-last: justify;
+    font-size: FS(25);
+  }
+}
+
+/* 阴影按钮 */
+.shadow-btn {
+  color: #fff;
+  background-color: rgb(4, 147, 172);
+  text-shadow: -2px 2px 2px rgb(4, 147, 172), -2px 2px 2px rgb(4, 147, 172),
+    -2px 2px 2px rgb(4, 147, 172), -2px 2px 2px rgb(4, 147, 172), -2px 2px 2px rgb(4, 147, 172),
+    -2px 2px 2px rgb(4, 147, 172);
+  box-shadow: 0px 15px 0px 0px rgb(2, 114, 134);
+  transition: all 0.5s;
+  border: none;
+
+  &:hover {
+    background-color: rgb(9, 139, 161);
+  }
+
+  &:active {
+    transform: translate(0, 4px);
+    box-shadow: 0px 1px 0px 0px rgb(2, 114, 134);
+  }
+}
+
+/* input- style */
+.input-dc {
+  border-radius: rem(3px);
+  outline: none;
+  border: 1px solid #ccc;
+  color: #696464;
+  text-align: right;
+  padding: rem(5px) rem(10px);
+
+  &:focus {
+    border-color: #64ccda;
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(102, 175, 233, 0.6);
+  }
+}
+
+// button
+button.buttons {
+  min-width: rem(80px);
+  height: rem(30px);
+  border: none;
+  background-color: #409eff;
+  text-align: center;
+  line-height: rem(30px);
+  border-radius: rem(3px);
+  color: white;
+  cursor: pointer;
+}
+
+button.buttons:hover {
+  opacity: 0.8;
+}
+
+// code
+pre,
+code {
+  font-family: Consolas;
+}
