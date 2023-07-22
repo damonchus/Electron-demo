@@ -14,6 +14,7 @@ export interface GameListType {
 
 export interface RecordListType {
   id: number | string
+  index?: number
   game_id: number | string
   time: string
   name: string

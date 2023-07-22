@@ -48,8 +48,6 @@ export const dialogChoose = async (type: String) => {
 
     const { filePaths } = repose
 
-    console.log(repose, 'filePaths', filePaths)
-
     filePaths.forEach((t: String) => {
       result.push({
         path: t,
@@ -69,6 +67,14 @@ export const dialogChoose = async (type: String) => {
  * @param {string} out    导出
  */
 export const ZipDirectory = async (source, out) => {
+  if (process.platform === 'win32') {
+    // 若是windows
+  } else {
+    // 若是mac
+    source.replace(/\//g, '\\')
+    out.replace(/\//g, '\\')
+  }
+
   const archive = archiver('zip', { zlib: { level: 9 } })
   const stream = fs.createWriteStream(out)
 
@@ -90,6 +96,13 @@ export const ZipDirectory = async (source, out) => {
  * @param {string} path   文件夹路径
  */
 const OpenDirectoryByPath = async (path: string) => {
+  if (process.platform === 'win32') {
+    // 若是windows
+  } else {
+    // 若是mac
+    path.replace(/\//g, '\\')
+  }
+
   try {
     const response = await shell.openPath(path)
     if (response === '') {
@@ -100,6 +113,29 @@ const OpenDirectoryByPath = async (path: string) => {
   } catch (error) {
     return `打开文件夹失败: ${error}`
   }
+}
+
+/**
+ * 按照指定路径删除文件
+ * @param {string} path   文件夹路径
+ */
+const DeleteFile = (path: string) => {
+  if (process.platform === 'win32') {
+    // 若是windows
+  } else {
+    // 若是mac
+    path.replace(/\//g, '\\')
+  }
+
+  return new Promise((resolve, reject) => {
+    fs.unlink(path, (err) => {
+      if (err) {
+        reject('An error occurred:' + err)
+      } else {
+        resolve('success')
+      }
+    })
+  })
 }
 
 ipcRenderer.on('get-app-path', (event, path) => {
@@ -116,12 +152,16 @@ export const SystemAppList = async () => {
   }
 }
 
+export const processPlatform = process.platform
+
 // Custom APIs for renderer
 const api = {
   dialogChoose,
   SystemAppList,
   ZipDirectory,
-  OpenDirectoryByPath
+  OpenDirectoryByPath,
+  processPlatform,
+  DeleteFile
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

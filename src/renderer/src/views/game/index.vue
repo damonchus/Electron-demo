@@ -32,9 +32,10 @@
         <div
           v-for="(t, index) in RecordList"
           :key="`record-list-${index}`"
-          class="record"
-          @click="OpenDirectory(t)">
-          <div class="word">
+          class="record">
+          <div
+            class="word"
+            @click="OpenDirectory(t)">
             <p>
               <!-- <span class="span-index">{{ index + 1 }}:</span> -->
               <span>{{ t.name }}</span>
@@ -44,8 +45,8 @@
             <!-- <p>{{ t.time }}</p> -->
           </div>
           <div class="btn">
-            <p>{{ t.time }}</p>
-            <!-- <el-button size="small" :icon="Search">查看</el-button> -->
+            <p class="btn-time">{{ t.time }}</p>
+            <el-button size="small" :icon="Delete" @click="DeleteFileFoo(t, index)" circle></el-button>
           </div>
         </div>
       </div>
@@ -68,6 +69,7 @@ import CountDownDom from '@renderer/components/CountDown/index.vue'
 import NS from '@renderer/assets/ns.png';
 
 import { ElNotification } from 'element-plus';
+import { Delete } from '@element-plus/icons-vue'
 import { TimeSet, Delay } from '@renderer/utils/index';
 
 import AppConfig from '@renderer/appconfig';
@@ -78,13 +80,13 @@ const CountDownDomRef = ref<{ Reset: () => void, Reload: () => void } | null>(nu
 
 /* 游戏信息 */
 const GameInfo = ref<GameListType>(props.info);
-const GameRecordNumber = reactive<{number: number}>({ number: 10 });
+const GameRecordNumber = reactive<{number: number}>({ number: 3 });
 /* 存档列表 */
 const RecordList = ref<RecordListType[]>([]);
 /* 新存档倒计时 */
 const CountDown = ref({
   go: false,
-  passTime: 5 * 1000,
+  passTime: 3 * 1000,
 });
 
 onMounted(() => {
@@ -98,19 +100,35 @@ const GetRecordSession = (set_id: number) => {
 }
 
 /* 设置本地存储存档 */
-const SetRecordSession = async (set_id: number, new_record: RecordListType) => {
+const SetRecordSession = async (set_id: number, new_record: RecordListType, is_delete: boolean = false) => {
   const List: RecordSessionType[] = Storage.get(AppConfig.session.RecordList) || [];
   
   const ListFlag: RecordSessionType | undefined = List.find((t: RecordSessionType) => t.id === set_id);
-  
-  if (ListFlag) {
-    // 若是有存档，添加到list
-    ListFlag.list.unshift(new_record);
+
+  // 为true则是删除
+  if (is_delete) {
+    const ListIndex: number = ListFlag!.list.findIndex((t: RecordListType) => t.id === new_record.id);
+    ListFlag!.list.splice(ListIndex, 1);
   } else {
-    // 若是没存档，新建存档
-    List.push({ id: set_id, list: [new_record] });
+    if (ListFlag) {
+      // 若是有存档，添加到list
+      ListFlag.list.unshift(new_record);
+
+    } else {
+      // 若是没存档，新建存档
+      List.push({ id: set_id, list: [new_record] });
+    }
   }
-  Storage.set(AppConfig.session.RecordList, List);
+
+  // 清除存档
+  if (ListFlag && ListFlag!.list.length >= GameRecordNumber.number + 1) {
+    await window.api.DeleteFile(ListFlag!.list.slice(-1)[0].path);
+    ListFlag.list = ListFlag.list.slice(0, GameRecordNumber.number);
+  }
+
+  // 保存数据
+  await Storage.set(AppConfig.session.RecordList, List);
+
   return true;
 }
 
@@ -123,9 +141,9 @@ const DownZero = async () => {
 /* 修改存档时间 */
 const ChangeTime = async (second: number) => {
   CountDown.value.go = false;
-  await Delay(1000);
+  await Delay(300);
   CountDown.value.passTime = second * 1000;
-  CountDown.value.go = true;
+  // CountDown.value.go = true;
 }
 
 /* 重置时间 */
@@ -141,15 +159,17 @@ const CountDownHandleClick = () => {
 /* 添加新的存档 */
 const SetNewRecord = async () => {
   const RecordListArr: RecordListType[] = [...RecordList.value];
+
   const GameFilePath: string = props.info.gameSaveMenu[0].path;
   const RandomNumber: number = Number(`${parseInt(JSON.stringify(Math.random() * 10 ** 8))}`)
   const DateNumber: string = TimeSet(new Date()).replace(/[:]/g, '-').replace(/[\s]/g, '');
-  const FileName: string = `${GameFilePath.split('/').slice(-1)[0]}`;
-  const SavePath: string = `${props.info.saveMenu[0].path}/${FileName}_${DateNumber}.zip`;
+  const FileName: string = `${GameFilePath.split(/[\\/]/).slice(-1)[0]}`;
+  const SavePath: string = `${props.info.saveMenu[0].path}\\${FileName}_${DateNumber}.zip`;
+
   await window.api.ZipDirectory(GameFilePath, SavePath);
 
   const new_record = {
-    id: RecordList.value.length + 1,
+    id: RandomNumber,
     game_id: RandomNumber,
     time: TimeSet(new Date()),
     name: FileName,
@@ -163,9 +183,26 @@ const SetNewRecord = async () => {
   return true;
 }
 
+/* 删除存档 */
+const DeleteFileFoo = async (record: RecordListType, index: number) => {
+  // 删除存档
+  RecordList.value.splice(index, 1);
+
+  const response: string = await window.api.DeleteFile(record.path);
+  if (response === 'success') {
+    await SetRecordSession(props.info.id, { ...record, index }, true);
+  } else {
+    ElNotification({
+      title: '删除存档',
+      message: '删除存档失败',
+      type: 'error',
+    })
+  }
+}
+
 /* 打开文件所在文件夹 */
 const OpenDirectory = async (record: RecordListType) => {
-  const str: string = record.path.match(/^(.*\/)/)![0];
+  const str: string = record.path.match(/^(.*[\\\/])/)![0];
   const response: string | boolean = await window.api.OpenDirectoryByPath(str);
 
   if (typeof response === 'string') {
@@ -245,7 +282,8 @@ const GoToBack = () => {
     }
 
     .record-box {
-      height: calc(80vh - 40px - #{rem(100px)});
+      @include scrollbar();
+      height: calc(80vh - 40px - 30px - #{rem(100px)});
       overflow-x: hidden;
       overflow-y: auto;
     }
@@ -259,10 +297,6 @@ const GoToBack = () => {
       cursor: pointer;
       color: $color-w;
 
-      &:hover {
-        color: $auxiliary-color-3;
-      }
-
       .word {
         display: flex;
         justify-content: space-between;
@@ -272,6 +306,19 @@ const GoToBack = () => {
             display: inline-block;
             width: rem(40px);
           }
+        }
+
+        &:hover {
+          color: $auxiliary-color-3;
+        }
+      }
+
+      .btn {
+        display: flex;
+        padding: 0 rem(10px);
+
+        .btn-time {
+          margin-right: rem(10px);
         }
       }
     }
