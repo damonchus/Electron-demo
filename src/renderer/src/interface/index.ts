@@ -25,3 +25,12 @@ export interface RecordSessionType {
   id: number
   list: RecordListType[]
 }
+
+export interface CosSettingType {
+  SecretId: string
+  SecretKey: string
+  Bucket: string
+  Region: string
+  IsUseYun?: boolean
+  fileMkdir?: string
+}

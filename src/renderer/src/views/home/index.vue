@@ -17,6 +17,10 @@
       </div>
     </div>
 
+    <div class="btn">
+      <el-button type="primary" :icon="Setting" @click="TenXunYunSetting"></el-button>
+    </div>
+
     <el-drawer
       v-model="drawer"
       direction="rtl"
@@ -35,6 +39,16 @@
     >
       <GameRecord :info="RecordDrawerValue" :closeHandler="handleDrawerClose" />
     </el-drawer>
+
+    <el-drawer
+      v-model="TenXunYunDrawer"
+      direction="rtl"
+      size="100%"
+      :with-header="false"
+      :before-close="handleDrawerClose"
+    >
+      <CosSetting :closeHandler="handleDrawerClose" />
+    </el-drawer>
   </div>
 </template>
 
@@ -45,10 +59,14 @@ export default {
 </script>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue';
+
 // import { ElNotification } from 'element-plus';
+import { Setting } from '@element-plus/icons-vue'
+
 import SaveForm from '@renderer/views/save/index.vue';
 import GameRecord from '@renderer/views/game/index.vue';
-import { ref, onMounted } from 'vue';
+import CosSetting from '@renderer/views/cos/index.vue';
 
 import AppConfig from '@renderer/appconfig';
 import Storage from '@renderer/utils/storage';
@@ -61,6 +79,8 @@ import { GameListType } from '@renderer/interface/index';
 const drawer = ref<boolean>(false);
 const RecordDrawer = ref<boolean>(false);
 const RecordDrawerValue = ref<GameListType | null>(null);
+const TenXunYunDrawer = ref<boolean>(false);
+const TenXunYunDrawerValue = ref<GameListType | null>(null);
 
 // 存档列表
 const SaveList = ref<GameListType[]>([]);
@@ -86,7 +106,14 @@ const handleDrawerClose = () => {
   drawer.value = false;
   RecordDrawer.value = false;
   RecordDrawerValue.value = null;
+  TenXunYunDrawer.value = false;
+  TenXunYunDrawerValue.value = null;
   GetNewList();
+}
+
+/* 打开腾讯云设置窗口 */
+const TenXunYunSetting = () => {
+  TenXunYunDrawer.value = true;
 }
 </script>
 
@@ -162,6 +189,13 @@ const handleDrawerClose = () => {
         }
       }
     }
+  }
+
+  .btn {
+    width: max-content;
+    position: fixed;
+    right: rem(-5px);
+    bottom: rem(20px);
   }
 }
 </style>
