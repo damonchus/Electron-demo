@@ -23,7 +23,7 @@
         <el-input v-model="FormData.Region" placeholder="" />
       </el-form-item>
       
-      <el-form-item label="保存文件夹" prop="fileMkdir">
+      <el-form-item label="保存文件夹" prop="FileMkdir">
         <el-input v-model="FormData.FileMkdir" placeholder="" />
       </el-form-item>
       
@@ -83,7 +83,7 @@ const FormSet = reactive({
 })
 
 onMounted(() => {
-  FormData.value = { ...Store.CosConfig, IsUseYun: Store.IsUseYun, fileMkdir: Store.fileMkdir };
+  FormData.value = { ...Store.CosConfig, IsUseYun: Store.IsUseYun, FileMkdir: Store.FileMkdir };
 })
 
 /* 表单提交 */

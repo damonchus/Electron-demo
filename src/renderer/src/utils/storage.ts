@@ -16,7 +16,11 @@ const getStorage = (key: string) => {
   if (Session) {
     const bytes = AES.decrypt(Session, key)
     const text = bytes.toString(Utf8)
-    Session = text.length ? JSON.parse(text) : ''
+    try {
+      Session = JSON.parse(text)
+    } catch (error) {
+      Session = text || ''
+    }
   }
   return Session
 }

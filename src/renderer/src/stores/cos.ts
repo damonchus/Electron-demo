@@ -48,7 +48,6 @@ export const useCosStore = defineStore('cos', () => {
     const IsUseYunSession = Storage.get(TenXunYunSession.IsUseYun)
     const FileMkdirSession = Storage.get(TenXunYunSession.FileMkdir)
     IsUseYun.value = typeof IsUseYunSession === 'boolean' ? IsUseYunSession : false
-    console.log('FileMkdirSession', FileMkdirSession)
     FileMkdir.value = FileMkdirSession || ''
   })
 
