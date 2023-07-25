@@ -34,3 +34,8 @@ export interface CosSettingType {
   IsUseYun?: boolean
   fileMkdir?: string
 }
+
+export interface ZipDirectoryReturnType {
+  path: string
+  file: File
+}

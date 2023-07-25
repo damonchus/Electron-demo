@@ -65,6 +65,8 @@ export const dialogChoose = async (type: String) => {
  * 打包文件夹
  * @param {string} source 源文件地址
  * @param {string} out    导出
+ * @returns
+ * @param {File}   file  文件对象
  */
 export const ZipDirectory = async (source, out) => {
   if (process.platform === 'win32') {
@@ -78,7 +80,8 @@ export const ZipDirectory = async (source, out) => {
   const archive = archiver('zip', { zlib: { level: 9 } })
   const stream = fs.createWriteStream(out)
 
-  const directory_path: string = source.split('/').slice(-1)[0]
+  const fu: string = process.platform === 'win32' ? '\\' : '/'
+  const directory_path: string = source.split(fu).slice(-1)[0]
 
   return new Promise((resolve, reject) => {
     archive
@@ -86,7 +89,14 @@ export const ZipDirectory = async (source, out) => {
       .on('error', (err) => reject(err))
       .pipe(stream)
 
-    stream.on('close', () => resolve(out))
+    stream.on('close', () => {
+      const path: string = out
+      const data = fs.readFileSync(path)
+      const fileName: string = path.split(/[\\/]/).slice(-1)[0]
+      const file = new File([data], fileName, { type: 'application/zip' })
+      // 返回File对象
+      resolve({ path, file })
+    })
     archive.finalize()
   })
 }

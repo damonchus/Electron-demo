@@ -61,8 +61,8 @@
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted } from 'vue';
-import { GameListType, RecordListType, RecordSessionType } from '@renderer/interface/index';
+import { ref, reactive, onMounted, computed } from 'vue';
+import { GameListType, RecordListType, RecordSessionType, ZipDirectoryReturnType } from '@renderer/interface/index';
 
 import CountDownDom from '@renderer/components/CountDown/index.vue'
 
@@ -74,6 +74,10 @@ import { TimeSet, Delay } from '@renderer/utils/index';
 
 import AppConfig from '@renderer/appconfig';
 import Storage from '@renderer/utils/storage';
+
+import { useCosStore } from '@renderer/stores/cos';
+
+const Store = useCosStore();
 
 const props = defineProps(['info', 'closeHandler']);
 const CountDownDomRef = ref<{ Reset: () => void, Reload: () => void } | null>(null);
@@ -88,6 +92,8 @@ const CountDown = ref({
   go: false,
   passTime: 3 * 1000,
 });
+/* 是否上传至云 */
+const IsUseYun = computed(() => Store.IsUseYun || false)
 
 onMounted(() => {
   GetRecordSession(props.info.id);
@@ -166,7 +172,13 @@ const SetNewRecord = async () => {
   const FileName: string = `${GameFilePath.split(/[\\/]/).slice(-1)[0]}`;
   const SavePath: string = `${props.info.saveMenu[0].path}\\${FileName}_${DateNumber}.zip`;
 
-  await window.api.ZipDirectory(GameFilePath, SavePath);
+  // 保存文件
+  const response: ZipDirectoryReturnType = await window.api.ZipDirectory(GameFilePath, SavePath);
+
+  if (IsUseYun) {
+    console.log(IsUseYun, 'IsUseYun', response)
+    Store.UploadFileToYun(response);
+  }
 
   const new_record = {
     id: RandomNumber,
