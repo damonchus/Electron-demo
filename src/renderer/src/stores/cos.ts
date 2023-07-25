@@ -22,8 +22,8 @@ export const useCosStore = defineStore('cos', () => {
   /* 保存腾讯云数据到本地 */
   const SetCosConfigInSession = async (
     config: CosSettingType,
-    IsUseYun: boolean,
-    FileMkdir: string
+    IsUseYun: boolean | undefined,
+    FileMkdir: string | undefined
   ) => {
     Storage.set(TenXunYunSession.tenxunyunConfig, config)
     Storage.set(TenXunYunSession.IsUseYun, IsUseYun)
