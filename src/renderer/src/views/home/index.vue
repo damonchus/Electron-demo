@@ -21,6 +21,10 @@
       <el-button type="primary" :icon="Setting" @click="TenXunYunSetting"></el-button>
     </div>
 
+    <div class="footer">
+      <p>Electron-vue3 Demo</p>
+    </div>
+
     <el-drawer
       v-model="drawer"
       direction="rtl"
@@ -195,7 +199,24 @@ const TenXunYunSetting = () => {
     width: max-content;
     position: fixed;
     right: rem(-5px);
-    bottom: rem(20px);
+    bottom: rem(70px);
+    .el-button {
+      height: rem(60px);
+    }
+  }
+
+  .footer {
+    width: 100%;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    height: rem(60px);
+    line-height: rem(60px);
+    background-color: $bgColor-w;
+    p {
+      font-size: rem(20px);
+      text-align: center;
+    }
   }
 }
 </style>
