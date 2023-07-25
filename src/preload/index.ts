@@ -71,16 +71,18 @@ export const dialogChoose = async (type: String) => {
 export const ZipDirectory = async (source, out) => {
   if (process.platform === 'win32') {
     // 若是windows
+    // source.replace(/\//g, '/')
+    // out.replace(/\//g, '/')
   } else {
     // 若是mac
-    source.replace(/\//g, '\\')
-    out.replace(/\//g, '\\')
+    source.replace(/\/]/g, '/')
+    out.replace(/[\/]/g, '/')
   }
 
   const archive = archiver('zip', { zlib: { level: 9 } })
   const stream = fs.createWriteStream(out)
 
-  const fu: string = process.platform === 'win32' ? '\\' : '/'
+  const fu: string = process.platform === 'win32' ? `\\` : '/'
   const directory_path: string = source.split(fu).slice(-1)[0]
 
   return new Promise((resolve, reject) => {

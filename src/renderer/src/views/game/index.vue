@@ -128,7 +128,13 @@ const SetRecordSession = async (set_id: number, new_record: RecordListType, is_d
 
   // 清除存档
   if (ListFlag && ListFlag!.list.length >= GameRecordNumber.number + 1) {
-    await window.api.DeleteFile(ListFlag!.list.slice(-1)[0].path);
+    const delete_path: string = ListFlag!.list.slice(-1)[0].path;
+    await window.api.DeleteFile(delete_path);
+
+    // 删除云存储
+    if (IsUseYun) {
+      Store.DeleteFileOnYun(delete_path.split(/[\\/]/).slice(-1)[0])
+    }
     ListFlag.list = ListFlag.list.slice(0, GameRecordNumber.number);
   }
 
@@ -170,13 +176,12 @@ const SetNewRecord = async () => {
   const RandomNumber: number = Number(`${parseInt(JSON.stringify(Math.random() * 10 ** 8))}`)
   const DateNumber: string = TimeSet(new Date()).replace(/[:]/g, '-').replace(/[\s]/g, '');
   const FileName: string = `${GameFilePath.split(/[\\/]/).slice(-1)[0]}`;
-  const SavePath: string = `${props.info.saveMenu[0].path}\\${FileName}_${DateNumber}.zip`;
+  const SavePath: string = `${props.info.saveMenu[0].path}/${FileName}_${DateNumber}.zip`;
 
   // 保存文件
   const response: ZipDirectoryReturnType = await window.api.ZipDirectory(GameFilePath, SavePath);
 
   if (IsUseYun) {
-    console.log(IsUseYun, 'IsUseYun', response)
     Store.UploadFileToYun(response);
   }
 

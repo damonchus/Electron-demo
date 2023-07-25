@@ -36,13 +36,6 @@ export const useCosStore = defineStore('cos', () => {
     return storageData ? storageData : DefaultCosConfig
   }
 
-  /* 上传数据到腾讯云 */
-  const UploadFileToYun = (file: ZipDirectoryReturnType) => {
-    if (file) {
-      QcCloud.uploadFile(file.file)
-    }
-  }
-
   // config of tenxunyun
   const CosConfig = ref<CosSettingType>(DefaultCosConfig)
 
@@ -60,5 +53,19 @@ export const useCosStore = defineStore('cos', () => {
     FileMkdir.value = FileMkdirSession || ''
   })
 
-  return { CosConfig, IsUseYun, FileMkdir, UploadFileToYun, SetCosConfigInSession }
+  /* 上传数据到腾讯云 */
+  const UploadFileToYun = (file: ZipDirectoryReturnType) => {
+    if (file) {
+      QcCloud.uploadFile(file.file)
+    }
+  }
+
+  /* 上传数据到腾讯云 */
+  const DeleteFileOnYun = (path: string) => {
+    if (path) {
+      QcCloud.DeleteFiles(FileMkdir + path)
+    }
+  }
+
+  return { CosConfig, IsUseYun, FileMkdir, UploadFileToYun, DeleteFileOnYun, SetCosConfigInSession }
 })

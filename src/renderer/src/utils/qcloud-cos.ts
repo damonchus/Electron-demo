@@ -41,16 +41,16 @@ const uploadFile = async (files: any) => {
         Bucket,
         Region,
         Key: FileMkdir + files.name,
-        Body: files, // 上传文件对象
-        onTaskReady: (info: any) => {
-          console.error('onTaskReady', info, cos)
-        },
-        onTaskStart: (info: any) => {
-          console.error('onTaskStart', info)
-        },
-        onProgress: (onProgress: any) => {
-          console.error('onProgress' + JSON.stringify(onProgress))
-        }
+        Body: files // 上传文件对象
+        // onTaskReady: (info: any) => {
+        //   console.error('onTaskReady', info, cos)
+        // },
+        // onTaskStart: (info: any) => {
+        //   console.error('onTaskStart', info)
+        // },
+        // onProgress: (onProgress: any) => {
+        //   console.error('onProgress' + JSON.stringify(onProgress))
+        // }
       },
       function (err: any, data: any) {
         if (err) {
@@ -99,7 +99,7 @@ const getFiles = async () => {
       Prefix: FileMkdir
     },
     function (err: any, data: any) {
-      console.error(err, data, '-------')
+      if (err) console.error(err, data, '-------')
     }
   )
 }
@@ -114,7 +114,7 @@ const DeleteFiles = async (FilePath: string) => {
       Key: FilePath // 文件路径
     },
     function (err: any, data: any) {
-      console.error(err, '-------', data)
+      if (err) console.error(err, '-------', data)
     }
   )
 }
@@ -128,7 +128,7 @@ const headBucket = async () => {
       Region
     },
     function (err: any, data: any) {
-      console.error(err || data, cos)
+      if (err) console.error(err || data, cos)
     }
   )
 }

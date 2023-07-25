@@ -49,7 +49,7 @@ export default {
 </script>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, defineProps } from 'vue';
+import { ref, defineProps, reactive, onMounted } from 'vue';
 
 import type { FormInstance } from 'element-plus';
 
@@ -93,9 +93,9 @@ const SubmitForm = async (formEl: FormInstance | undefined) => {
     if (valid) {
       // 更新store数据
       const { Bucket, Region, SecretId, SecretKey, IsUseYun, FileMkdir } = FormData.value;
-      Store.$patch('CosConfig', { Bucket, Region, SecretId, SecretKey });
-      Store.$patch('IsUseYun', IsUseYun);
-      Store.$patch('fileMkdir', FileMkdir);
+      Store.$patch({ key: 'CosConfig', value: { Bucket, Region, SecretId, SecretKey } });
+      Store.$patch({ key: 'IsUseYun', value: IsUseYun });
+      Store.$patch({ key: 'fileMkdir', value: FileMkdir });
       // 保存信息到本地
       Store.SetCosConfigInSession({ Bucket, Region, SecretId, SecretKey }, IsUseYun, FileMkdir);
 

@@ -32,7 +32,7 @@ export interface CosSettingType {
   Bucket: string
   Region: string
   IsUseYun?: boolean
-  fileMkdir?: string
+  FileMkdir?: string
 }
 
 export interface ZipDirectoryReturnType {
