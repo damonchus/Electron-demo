@@ -1,4 +1,4 @@
-import { app, shell, BrowserWindow } from 'electron'
+import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -81,3 +81,15 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
+
+let intervalId
+
+ipcMain.on('start-timer', (event, interval) => {
+  intervalId = setTimeout(() => {
+    event.sender.send('timer-event', 'Timer tick') // 发送定时器事件到渲染进程
+  }, 1000)
+})
+
+ipcMain.on('stop-timer', () => {
+  clearInterval(intervalId) // 停止定时器
+})

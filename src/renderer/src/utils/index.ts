@@ -1,3 +1,5 @@
+import internal from 'stream'
+
 /**
  * 设置时间格式
  * @param {Date} n 时间
@@ -24,4 +26,23 @@ const toTime = (n) => {
 
 export function Delay(time: number) {
   return new Promise((resolve) => setTimeout(resolve, time))
+}
+
+/**
+ * requestAnimationFrame定时器
+ * @param {Function}   callback 回调函数
+ * @param {delay}      delay    时间精度
+ */
+export function setTimeoutUsingRAF(callback: () => void, delay: number): void {
+  let start = performance.now()
+
+  function checkTime(timestamp: number) {
+    if (timestamp - start >= delay) {
+      callback()
+    } else {
+      requestAnimationFrame(checkTime)
+    }
+  }
+
+  requestAnimationFrame(checkTime)
 }

@@ -5,13 +5,16 @@
     "src/renderer/src/**/*",
     "src/renderer/src/**/*.vue",
     "src/preload/*.d.ts"
-  ],
+, "src/renderer/worker.js"  ],
   "compilerOptions": {
     "composite": true,
     "baseUrl": ".",
     "paths": {
       "@renderer/*": [
         "src/renderer/src/*"
+      ],
+      "@renderer_top/*": [
+        "src/renderer/*"
       ]
     }
   }

@@ -166,6 +166,14 @@ export const SystemAppList = async () => {
 
 export const processPlatform = process.platform
 
+// 定时器
+export const setTimeoutInElectron = (callback: () => void, delay: number) => {
+  const timer = setTimeout(() => {
+    callback()
+    clearTimeout(timer)
+  }, delay)
+}
+
 // Custom APIs for renderer
 const api = {
   dialogChoose,
@@ -173,7 +181,8 @@ const api = {
   ZipDirectory,
   OpenDirectoryByPath,
   processPlatform,
-  DeleteFile
+  DeleteFile,
+  setTimeoutInElectron
 }
 
 // Use `contextBridge` APIs to expose Electron APIs to

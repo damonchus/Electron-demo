@@ -20,6 +20,10 @@ const TimeNumber = ref<number>(props.time / 1000);
 const TimeNum = computed(() => props.time);
 const Timeinterrupt = computed(() => props.go);
 
+window.api.setTimeoutInElectron(() => {
+  Reload();
+}, 1000);
+
 watch(TimeNum, (n) => {
   TimeNumber.value = n / 1000;
 })
@@ -39,11 +43,23 @@ const TimeTranslate = computed(() => {
 // onMounted(() => {
 //   if (Timeinterrupt.value) Timer();
 // })
+const StartTimer = (callback: () => void, delay: number) => {
+  window.electron.ipcRenderer.removeAllListeners('timer-event'); // 移除旧的监听器
+  window.electron.ipcRenderer.send('start-timer', delay); // 启动定时器
+  window.electron.ipcRenderer.on('timer-event', () => {
+    // 处理定时器事件
+    StopTimer();
+    callback();
+  });
+}
+const StopTimer = () => {
+  window.electron.ipcRenderer.send('stop-timer'); // 停止定时器
+}
 
 /* 倒计时 */
 const Timer = () => {
-  const tir = setTimeout(() => {
-    clearTimeout(tir);
+    
+  StartTimer(() => {
     // 定时器 开始计时 && 时间大于零
     if (Timeinterrupt.value && TimeNumber.value > 0) {
       TimeNumber.value--;
@@ -55,11 +71,13 @@ const Timer = () => {
         if (Timeinterrupt.value) {
           Emit('downZero', true);
 
-          setTimeout(() => Reload(), 1000);
+          setTimeout(() => {
+            Reload();
+          }, 1000);
         }
       }
     }
-  }, 1000)
+  }, 1000);
 }
 
 /* 重启定时器 */
