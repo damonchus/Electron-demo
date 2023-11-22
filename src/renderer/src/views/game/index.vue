@@ -132,7 +132,7 @@ const SetRecordSession = async (set_id: number, new_record: RecordListType, is_d
     await window.api.DeleteFile(delete_path);
 
     // 删除云存储
-    if (IsUseYun) {
+    if (IsUseYun.value) {
       Store.DeleteFileOnYun(delete_path.split(/[\\/]/).slice(-1)[0])
     }
     ListFlag.list = ListFlag.list.slice(0, GameRecordNumber.number);
@@ -181,7 +181,7 @@ const SetNewRecord = async () => {
   // 保存文件
   const response: ZipDirectoryReturnType = await window.api.ZipDirectory(GameFilePath, SavePath);
 
-  if (IsUseYun) {
+  if (IsUseYun.value) {
     Store.UploadFileToYun(response);
   }
 
