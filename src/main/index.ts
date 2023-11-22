@@ -87,7 +87,7 @@ let intervalId
 ipcMain.on('start-timer', (event, interval) => {
   intervalId = setTimeout(() => {
     event.sender.send('timer-event', 'Timer tick') // 发送定时器事件到渲染进程
-  }, 1000)
+  }, interval)
 })
 
 ipcMain.on('stop-timer', () => {
