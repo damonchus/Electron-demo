@@ -129,13 +129,16 @@ const SetRecordSession = async (set_id: number, new_record: RecordListType, is_d
   // 清除存档
   if (ListFlag && ListFlag!.list.length >= GameRecordNumber.number + 1) {
     const delete_path: string = ListFlag!.list.slice(-1)[0].path;
-    await window.api.DeleteFile(delete_path);
-
-    // 删除云存储
-    if (IsUseYun.value) {
-      Store.DeleteFileOnYun(delete_path.split(/[\\/]/).slice(-1)[0])
+    
+    try {
+      await window.api.DeleteFile(delete_path);
+    } finally {
+      // 删除云存储
+      if (IsUseYun.value) {
+        Store.DeleteFileOnYun(delete_path.split(/[\\/]/).slice(-1)[0])
+      }
+      ListFlag.list = ListFlag.list.slice(0, GameRecordNumber.number);
     }
-    ListFlag.list = ListFlag.list.slice(0, GameRecordNumber.number);
   }
 
   // 保存数据
