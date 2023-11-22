@@ -1,5 +1,3 @@
-import internal from 'stream'
-
 /**
  * 设置时间格式
  * @param {Date} n 时间
