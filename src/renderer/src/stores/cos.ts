@@ -46,12 +46,17 @@ export const useCosStore = defineStore('cos', () => {
   const FileMkdir = ref<string>('')
 
   onMounted(() => {
+    UpdateCosCOnfigData()
+  })
+
+  /* 更新云存储数据 */
+  const UpdateCosCOnfigData = () => {
     CosConfig.value = GetCosConfigInSession()
     const IsUseYunSession = Storage.get(TenXunYunSession.IsUseYun)
     const FileMkdirSession = Storage.get(TenXunYunSession.FileMkdir)
     IsUseYun.value = typeof IsUseYunSession === 'boolean' ? IsUseYunSession : false
     FileMkdir.value = FileMkdirSession || ''
-  })
+  }
 
   /* 上传数据到腾讯云 */
   const UploadFileToYun = (file: ZipDirectoryReturnType) => {
@@ -67,5 +72,13 @@ export const useCosStore = defineStore('cos', () => {
     }
   }
 
-  return { CosConfig, IsUseYun, FileMkdir, UploadFileToYun, DeleteFileOnYun, SetCosConfigInSession }
+  return {
+    CosConfig,
+    IsUseYun,
+    FileMkdir,
+    UploadFileToYun,
+    DeleteFileOnYun,
+    SetCosConfigInSession,
+    UpdateCosCOnfigData
+  }
 })
