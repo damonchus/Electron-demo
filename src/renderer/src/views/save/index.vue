@@ -54,7 +54,8 @@ export default {
 
 <script setup lang="ts">
 import AppConfig from '@renderer/appconfig';
-import Storage from '@renderer/utils/storage';
+
+import { useCosStore } from '@renderer/stores/cos';
 
 // import { fa } from 'element-plus/es/locale';
 import { ElNotification } from 'element-plus';
@@ -64,6 +65,11 @@ import NS from '@renderer/assets/ns.png';
 import { GameListType, DialogResultType } from '@renderer/interface/index';
 
 import { ref } from 'vue';
+
+import Storage from '@renderer/utils/storage';
+
+const Store = useCosStore();
+
 const props = defineProps(['closeHandler']);
 
 const FormData = ref<GameListType>({
@@ -84,6 +90,9 @@ const onSubmit = async () => {
     const Past: GameListType[] = Storage.get(AppConfig.session.SaveList) || [];
     Past.push({ ...FormData.value, id: new Date().getTime() })
     Storage.set(AppConfig.session.SaveList, Past);
+
+    // 更新store数据
+    Store.UpdateCosCOnfigData();
 
     // 关闭弹窗
     props.closeHandler();
